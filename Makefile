@@ -1,14 +1,14 @@
 lexer.h: lang.l
-	win_flex lang.l
+	flex lang.l
 
 lexer.c: lang.l
-	win_flex lang.l
+	flex lang.l
 
 parser.c: lang.y
-	win_bison -o parser.c -d -v lang.y
+	bison -o parser.c -d -v lang.y
 
 parser.h: lang.y
-	win_bison -o parser.c -d -v lang.y
+	bison -o parser.c -d -v lang.y
 
 lang.o: lang.c lang.h
 	gcc -c lang.c
@@ -28,7 +28,7 @@ main: lang.o parser.o lexer.o main.o
 all: main
 
 clean:
-	del lexer.h lexer.c parser.h parser.c *.o main
+	rm -f lexer.h lexer.c parser.h parser.c *.o main
 
 %.c: %.y
 
