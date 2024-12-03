@@ -7,9 +7,8 @@ extern struct cmd * root;
 int yyparse();
 
 int main(int argc, char **argv) {
-    //yyin = stdin;
-    yyin = fopen(argv[1], "rb");
+    yyin = stdin;
     yyparse();
-    fclose(yyin);
-    print_cmd(root, 0);
+    fclose(stdin);
+    print_cmd(root);
 }
