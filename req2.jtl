@@ -1,0 +1,9 @@
+char a[] = "hello";
+char a[] = {'a', 'b', 'c'};
+char a[3];
+char a = 'a';
+char a[3] = {'a', 'b', 'c'};
+char a[3] = {'a', 'b', 'c'};
+char a[5] = "hello";
+char a[12] = "world";
+a[1] = 's'

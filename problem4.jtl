@@ -1,0 +1,4 @@
+char a[3] = "hel";
+char a[3] = "hello";
+char a[3] = {'1', '2', '3'};
+char a[3] = {'h', 'e', 'l', 'l', 'o'}

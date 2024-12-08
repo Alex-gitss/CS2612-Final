@@ -1,0 +1,11 @@
+char a;
+char a = 's';
+char a[3];
+a[1] = 's';
+char a[3] = {'a', 'b', 'c'};
+char a[5] = "hello";
+char a[12] = "world";
+var a, b, c;
+var a, b[2], *c;
+var *a, **b, ***c;
+var a = 1, b[3] = {2,3}, c[2][3] = {{1,2,3}, {4,5,6}}

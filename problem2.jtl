@@ -1,0 +1,10 @@
+var a = 3;
+var b = a;
+var c = 3 + 4;
+var d = b * c;
+var e = a[2];
+var hello = world[2][3];
+var f = *(a + 4);
+var a[3] = {2, 3, 4};
+var mul[2][2] = {{1,2}, {3,4}};
+var *a = malloc(n)

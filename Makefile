@@ -28,7 +28,7 @@ main: lang.o parser.o lexer.o main.o
 all: main
 
 clean:
-	del lexer.h lexer.c parser.h parser.c *.o main
+	del lexer.h lexer.c parser.h parser.c *.o main.exe
 
 %.c: %.y
 

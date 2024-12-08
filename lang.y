@@ -14,23 +14,29 @@ char * i;
 struct expr * e;
 struct cmd * c;
 void * none;
-char * single_char;
-struct init_list * init_list;
-struct expr_list * expr_list;
-struct expr_list * sizes;
+// 初始化列表字段
+struct init_list *init_list; 
+// 表达式列表字段
+struct expr_list *e_list; 
+// 单个字符字段
+char *single_char;
+// 多变量声明列表字段
+struct var_decl_list *var_list;
+// 变量声明字段
 struct var_decl var_decl;
-struct multi_var_decl * multi_var_decl;
+// 多维数组索引字段
+struct expr_list *sizes; 
 }
 
 // Terminals
 %token <n> TM_NAT
 %token <i> TM_IDENT
-%token <i> TM_STRING
 %token <none> TM_LEFT_BRACE TM_RIGHT_BRACE
+// 添加终结符
 %token <none> TM_LEFT_BRACKET TM_RIGHT_BRACKET
 %token <none> TM_LEFT_PAREN TM_RIGHT_PAREN
-%token <none> TM_COMMA
 %token <none> TM_SEMICOL
+%token <none> TM_COMMA
 %token <none> TM_MALLOC TM_RI TM_RC TM_WI TM_WC
 %token <none> TM_VAR TM_IF TM_THEN TM_ELSE TM_WHILE TM_DO TM_CHAR
 %token <none> TM_ASGNOP
@@ -40,44 +46,47 @@ struct multi_var_decl * multi_var_decl;
 %token <none> TM_LT TM_LE TM_GT TM_GE TM_EQ TM_NE
 %token <none> TM_PLUS TM_MINUS
 %token <none> TM_MUL TM_DIV TM_MOD
-%token <single_char> TM_SINGLE_CHAR
+// 字符常量
+%token <single_char> TM_SINGLE_CHAR    
+// 字符串常量
+%token <i> TM_STRING  
 
 // Nonterminals
 %type <c> NT_WHOLE
 %type <c> NT_CMD
 %type <e> NT_EXPR_2
 %type <e> NT_EXPR
-
-// level of pointer type
-%type <n> NT_POINTER_LEVEL
-// initialization list type
+// 指针级数
+%type <n> NT_PTR_LEVEL
+// 初始化列表
 %type <init_list> NT_INIT_LIST
-// expression list type
-%type <expr_list> NT_EXPR_LIST
+// 表达式列表
+%type <e_list> NT_EXPR_LIST
 
 // 初始化字符列表
 %type <init_list> NT_INIT_CHAR_LIST
 // 字符列表
-%type <expr_list> NT_CHAR_LIST
+%type <e_list> NT_CHAR_LIST
 
-// declaration one of variable
+// 变量声明
 %type <var_decl> NT_VAR_DECL
-// declaration of multi variables
-%type <multi_var_decl> NT_VAR_LIST
+// 单语句多变量声明列表
+%type <var_list> NT_VAR_LIST
 // 多维数组索引
-%type <sizes> NT_MD_ARRAY_SIZES
+%type <sizes> NT_MULTI_ARR_SIZES
+
 
 // Priority
-%nonassoc TM_ASGNOP
-%left TM_OR
-%left TM_AND
-%left TM_LT TM_LE TM_GT TM_GE TM_EQ TM_NE
 %left TM_PLUS TM_MINUS
 %left TM_MUL TM_DIV TM_MOD
-%right TM_SEMICOL TM_COMMA TM_NOT
+%left TM_LT TM_LE TM_GT TM_GE TM_EQ TM_NE
+%left TM_AND TM_OR
 %nonassoc TM_LEFT_PAREN TM_RIGHT_PAREN
 %nonassoc TM_LEFT_BRACE TM_RIGHT_BRACE
+%right TM_SEMICOL TM_COMMA
+%right TM_NOT
 %left TM_LEFT_BRACKET
+
 
 %%
 
@@ -89,53 +98,57 @@ NT_WHOLE:
   }
 ;
 
-NT_POINTER_LEVEL:
+// 用于解析指针层级
+NT_PTR_LEVEL:
+  // 最初是1
   TM_MUL
   {
     $$ = 1;
   }
-  | TM_MUL NT_POINTER_LEVEL
+  // 每多一级, 递增1
+  | TM_MUL NT_PTR_LEVEL
   {
     $$ = $2 + 1;
   }
 ;
 
+// 调用create_init_list函数, 解析初始化列表
 NT_INIT_LIST:
-  TM_LEFT_BRACE NT_EXPR_LIST TM_RIGHT_BRACE
-  {
-    $$ = create_init_list($2);
-  }
+    TM_LEFT_BRACE NT_EXPR_LIST TM_RIGHT_BRACE
+    {
+        $$ = create_init_list($2);
+    }
 ;
 
-
+// 解析表达式列表
 NT_EXPR_LIST:
-  // empty list
+// 空列表, 返回NULL
     {
         $$ = NULL;
     }
-  // single expression
+// 单个表达式情形, 调用create_expr_list创建列表
 | NT_EXPR
     {
         $$ = create_expr_list($1);
     }
-  // multi expressions
+// 多个表达式情形, 调用append_to_expr_list向其中添加新表达式
 | NT_EXPR_LIST TM_COMMA NT_EXPR
     {
-        $$ = add_expr_list($1, $3);
+        $$ = append_to_expr_list($1, $3);
     }
-  // initialization list
+// 本身就是初始化列表, 直接调用create_expr_list函数即可
 | NT_INIT_LIST
     {
         $$ = create_expr_list(new_expr(T_INIT_LIST, $1));
     }
-  // initialization list after expression list
+// 表达式列表后跟随初始化列表, 向其中添加即可
 | NT_EXPR_LIST TM_COMMA NT_INIT_LIST
     {
-        $$ = add_expr_list($1, new_expr(T_INIT_LIST, $3));
+        $$ = append_to_expr_list($1, new_expr(T_INIT_LIST, $3));
     }
 ;
 
-  // initialization char list
+// 解析初始字符列表, 复用create_init_list函数
 NT_INIT_CHAR_LIST:
     TM_LEFT_BRACE NT_CHAR_LIST TM_RIGHT_BRACE
     {
@@ -143,79 +156,80 @@ NT_INIT_CHAR_LIST:
     }
 ;
 
-// char list
+// 解析字符列表
 NT_CHAR_LIST:
-  // single char
-  TM_SINGLE_CHAR
+// 单个字符情形
+TM_SINGLE_CHAR
 {
     $$ = create_expr_list(TChar($1));
 }
-  // string
+// 字符串情形
 | NT_CHAR_LIST TM_COMMA TM_SINGLE_CHAR
 {
-    $$ = add_expr_list($1, TChar($3));
+    $$ = append_to_expr_list($1, TChar($3));
 }
 ;
 
-// index of multi-dimensional array
-NT_MD_ARRAY_SIZES:
-
-  TM_LEFT_BRACKET NT_EXPR TM_RIGHT_BRACKET 
+// 用于解析多维数组索引部分
+NT_MULTI_ARR_SIZES:
+// 明确说明大小情形
+TM_LEFT_BRACKET NT_EXPR TM_RIGHT_BRACKET 
   { 
     $$ = create_expr_list($2); 
   }
-
-| NT_MD_ARRAY_SIZES TM_LEFT_BRACKET NT_EXPR TM_RIGHT_BRACKET 
+// 新维度, 说明了大小
+| NT_MULTI_ARR_SIZES TM_LEFT_BRACKET NT_EXPR TM_RIGHT_BRACKET 
   {  
-    $$ = add_expr_list($1, $3); 
+    $$ = append_to_expr_list($1, $3); 
   }
 ;
 
-// declaration of variables
+// 变量的声明, 包含了单语句多变量, 也包含数组, 指针等等
 NT_VAR_DECL:
-  // declaration of single variable
+// 单个变量声明, 无初值
   TM_IDENT
   {
-    $$ = (struct var_decl){ .name = $1, .type = VAR_SIMPLE, .sizes = NULL, .pointer_level = 0 };
+    $$ = (struct var_decl){ .name = $1, .type = VAR_SIMPLE, .sizes = NULL, .ptr_level = 0 };
   }
-  // declaration and initialization of single variable
+// 单个变量声明及初始化
 | TM_IDENT TM_ASGNOP NT_EXPR
   {
     $$ = (struct var_decl){ .name = $1, .type = VAR_SIMPLE, .init_expr = $3 };
   }
-  // declaration of array
-| TM_IDENT NT_MD_ARRAY_SIZES
+// 数组(一维或多维)声明, 无初值
+| TM_IDENT NT_MULTI_ARR_SIZES
   {
-    $$ = (struct var_decl){ .name = $1, .type = VAR_ARRAY, .sizes = $2, .pointer_level = 0 };
+    $$ = (struct var_decl){ .name = $1, .type = VAR_ARRAY, .sizes = $2, .ptr_level = 0 };
   }
-  // declaration and initialization of array
-| TM_IDENT NT_MD_ARRAY_SIZES TM_ASGNOP NT_INIT_LIST
+// 数组(一维或多维)声明, 以及初始化
+| TM_IDENT NT_MULTI_ARR_SIZES TM_ASGNOP NT_INIT_LIST
   {
-    $$ = (struct var_decl){ .name = $1, .type = VAR_ARRAY, .sizes = $2, .pointer_level = 0, .init_expr_list = $4 };
+    $$ = (struct var_decl){ .name = $1, .type = VAR_ARRAY, .sizes = $2, .ptr_level = 0, .init_expr_list = $4 };
   }
-  // declaration of pointer 
-| NT_POINTER_LEVEL TM_IDENT
+// 指针类型, 一级或多级指针
+| NT_PTR_LEVEL TM_IDENT
   {
-    $$ = (struct var_decl){ .name = $2, .type = VAR_POINTER, .sizes = NULL, .pointer_level = $1 };
+    $$ = (struct var_decl){ .name = $2, .type = VAR_POINTER, .sizes = NULL, .ptr_level = $1 };
   }
 ;
 
-// list of multi variables
+// 解析多变量列表
 NT_VAR_LIST:
-  // single variable
+// 单个变量情形
   NT_VAR_DECL
   {
-    $$ = create_multi_var_decl($1);
+    $$ = create_var_decl_list($1);
   }
-  // multi variables
+// 多变量, 递归解析
 | NT_VAR_LIST TM_COMMA NT_VAR_DECL
   {
-    $$ = add_multi_var_decl($1, $3);
+    $$ = append_to_var_decl_list($1, $3);
   }
 ;
 
+// 解析指令类型
 NT_CMD:
-| NT_EXPR TM_ASGNOP NT_EXPR
+NT_EXPR TM_ASGNOP NT_EXPR
   {
     $$ = (TAsgn($1,$3));
   }
@@ -240,10 +254,10 @@ NT_CMD:
     $$ = (TWriteChar($3));
   }
 // 解析动态数组初始化, malloc
-| TM_VAR NT_POINTER_LEVEL TM_IDENT TM_ASGNOP TM_MALLOC TM_LEFT_PAREN NT_EXPR TM_RIGHT_PAREN
+| TM_VAR NT_PTR_LEVEL TM_IDENT TM_ASGNOP TM_MALLOC TM_LEFT_PAREN NT_EXPR TM_RIGHT_PAREN
   {
     // $2 是指针级别
-    $$ = TPointerDecl($3, $2, $7); 
+    $$ = TPtrDecl($3, $2, $7); 
   } 
 | TM_CHAR TM_IDENT 
   {
@@ -256,18 +270,29 @@ NT_CMD:
 // 解析字符串类型, 规定了大小
 | TM_CHAR TM_IDENT TM_LEFT_BRACKET NT_EXPR TM_RIGHT_BRACKET 
   {
-      $$ = TStringDeclString($2, $4, NULL); 
+      $$ = TStringDecl_String($2, $4, NULL); 
   }
 // 解析字符串类型, 规定了大小, 并以双引号包围字符串初始化
 | TM_CHAR TM_IDENT TM_LEFT_BRACKET NT_EXPR TM_RIGHT_BRACKET TM_ASGNOP TM_STRING
   {
-      $$ = TStringDeclString($2, $4, TString($7)); 
+      $$ = TStringDecl_String($2, $4, TString($7)); 
+  }
+// 解析字符串类型，不人为指定大小，通过初始化列表确定大小
+| TM_CHAR TM_IDENT TM_LEFT_BRACKET TM_RIGHT_BRACKET TM_ASGNOP TM_STRING
+  {
+      $$ = TStringDecl_String2($2, TString($6)); 
   }
 // 解析字符串类型, 规定了大小, 并以字符列表初始化
 | TM_CHAR TM_IDENT TM_LEFT_BRACKET NT_EXPR TM_RIGHT_BRACKET TM_ASGNOP NT_INIT_CHAR_LIST
   {
-      $$ = TStringDeclArray($2, $4, $7); 
+      $$ = TStringDecl_Array($2, $4, $7); 
   }
+// 解析字符串类型，不人为指定大小，通过初始化列表确定大小
+| TM_CHAR TM_IDENT TM_LEFT_BRACKET TM_RIGHT_BRACKET TM_ASGNOP NT_INIT_CHAR_LIST
+  {
+      $$ = TStringDecl_Array2($2, $6); 
+  }
+
 // 变量的声明, 单/多变量, 进一步在NT_VAR_LIST中解析
 | TM_VAR NT_VAR_LIST
   {
@@ -289,12 +314,12 @@ NT_EXPR_2:
   {
     $$ = (TVar($1));
   }
-// single char
+// 单字符情形
 | TM_SINGLE_CHAR
   {
       $$ = TChar($1);
   }
-// string
+// 字符串情形
 | TM_STRING
   {
       $$ = TString($1);
@@ -326,7 +351,7 @@ NT_EXPR_2:
 // 多维数组情形
 | NT_EXPR_2 TM_LEFT_BRACKET NT_EXPR TM_RIGHT_BRACKET
   {
-    $$ = (TMDArray($1, $3)); // 多维数组访问
+    $$ = (TMultiArray($1, $3)); // 多维数组访问
   }
 ;
 
