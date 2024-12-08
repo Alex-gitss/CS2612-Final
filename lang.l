@@ -16,10 +16,6 @@
     return TM_VAR;
 }
 
-"char" {
-    return TM_CHAR;
-}
-
 "if" {
     return TM_IF;
 }
@@ -71,10 +67,13 @@
 }
 
 \"[_A-Za-z][_A-Za-z0-9]*\" {
-    yylval.i = new_str(yytext, yyleng); 
+    yylval.i = new_str(yytext, yyleng);
     return TM_STRING;
 }
 
+"," {
+    return TM_COMMA;
+}
 
 ";" {
     return TM_SEMICOL;
@@ -89,13 +88,12 @@
     }
 
 "[" {
-  return TM_LEFT_BRACKET;
-}
+    return TM_LEFT_BRACKET;
+    }
 
 "]" {
-  return TM_RIGHT_BRACKET;
-}
-
+    return TM_RIGHT_BRACKET;
+    }
 
 "{" {
     return TM_LEFT_BRACE;
@@ -164,10 +162,6 @@
 "!" {
     return TM_NOT;
     }
-
-"," {
-    return TM_COMMA;
-}
 
 [ \t\n\r]    { };
 
