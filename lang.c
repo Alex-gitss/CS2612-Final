@@ -152,12 +152,11 @@ struct cmd * TWriteChar(struct expr * argument) {
     return result;
 }
 
-/**
- * Create an expression representing a single array access
- * 
- * @param array_name The name of the array
- * @param index_expr The expression representing the index of the array element
- * @return Returns a new expression pointer representing the array access
+/*
+    Create an expression representing a single array access:
+    array_name : The name of the array
+    index_expr : The expression representing the index of the array element
+    Returns a new expression pointer representing the array access
  */
 struct expr * TArray(char * array_name, struct expr * index_expr) {
     struct expr * result = new_expr_ptr();
@@ -168,11 +167,11 @@ struct expr * TArray(char * array_name, struct expr * index_expr) {
 }
 
 /**
- * Create an expression representing multi-dimensional array access
- * 
- * @param array_expr The expression representing the already partially accessed array
- * @param index_expr The expression representing the current dimension's index
- * @return Returns a new expression pointer representing further access to the multi-dimensional array
+    Create an expression representing multi-dimensional array access:
+
+    array_expr : The expression representing the already partially accessed array
+    index_expr : The expression representing the current dimension's index
+    Returns a new expression pointer representing further access to the multi-dimensional array
  */
 struct expr * TMDArray(struct expr * array_expr, struct expr * index_expr) {
     struct expr * result = new_expr_ptr();
@@ -182,11 +181,11 @@ struct expr * TMDArray(struct expr * array_expr, struct expr * index_expr) {
     return result;
 }
 
-/**
- * Create a new expression list node
- * 
- * @param expr_node The expression to add to the list
- * @return Returns a new expression list node containing the provided expression
+/*
+    Create a new expression list node
+
+    expr_node The expression to add to the list
+    Returns a new expression list node containing the provided expression
  */
 struct expr_list * create_expr_list(struct expr * expr_node) {
     struct expr_list * new_list = malloc(sizeof(struct expr_list));
@@ -198,11 +197,11 @@ struct expr_list * create_expr_list(struct expr * expr_node) {
     return new_list;
 }
 
-/**
- * Create a new initialization list node
- * 
- * @param expression_list The expression list to add to the initialization list
- * @return Returns a new initialization list node containing the provided expression list
+/*
+    Create a new initialization list node
+
+    expression_list : The expression list to add to the initialization list
+    Returns a new initialization list node containing the provided expression list
  */
 struct init_list * create_init_list(struct expr_list * expression_list) {
     struct init_list * new_list = malloc(sizeof(struct init_list));
@@ -213,12 +212,12 @@ struct init_list * create_init_list(struct expr_list * expression_list) {
     return new_list;
 }
 
-/**
- * Append an expression to the end of an expression list
- * 
- * @param list The list to append the expression to
- * @param expr_node The expression to append
- * @return Returns the updated expression list
+/*
+    Append an expression to the end of an expression list
+
+    list : The list to append the expression to
+    expr_node : The expression to append
+    Returns the updated expression list
  */
 struct expr_list * add_expr_list(struct expr_list * list, struct expr * expr_node) {
     struct expr_list * current = list;
@@ -233,13 +232,13 @@ struct expr_list * add_expr_list(struct expr_list * list, struct expr * expr_nod
     return list;
 }
 
-/**
- * Create an array declaration command
- * 
- * @param array_name The name of the array
- * @param array_size The size of the array
- * @param init_expression The initialization expression list for the array
- * @return Returns a new command pointer representing the array declaration
+/*
+    Create an array declaration command
+
+    array_name : The name of the array
+    array_size : The size of the array
+    init_expression : The initialization expression list for the array
+    Returns a new command pointer representing the array declaration
  */
 struct cmd * TArrayDecl(char * array_name, struct expr * array_size, struct init_list * init_expression) {
     struct cmd * result = new_cmd_ptr();
@@ -250,13 +249,13 @@ struct cmd * TArrayDecl(char * array_name, struct expr * array_size, struct init
     return result;
 }
 
-/**
- * Create a string declaration command (initialized with double-quoted string)
- * 
- * @param string_name The name of the string variable
- * @param string_size The size of the string
- * @param init_expression The expression initializing the string (double-quoted string)
- * @return Returns a new command pointer representing the string declaration
+/*
+    Create a string declaration command (initialized with double-quoted string)
+
+    string_name : The name of the string variable
+    string_size : The size of the string
+    init_expression : The expression initializing the string (double-quoted string)
+    Returns a new command pointer representing the string declaration
  */
 struct cmd * TStringDeclString(char * string_name, struct expr * string_size, struct expr * init_expression) {
     struct cmd * result = new_cmd_ptr();
@@ -267,12 +266,12 @@ struct cmd * TStringDeclString(char * string_name, struct expr * string_size, st
     return result;
 }
 
-/**
- * Create a string declaration command without size specified (initialized with double-quoted string)
- * 
- * @param string_name The name of the string variable
- * @param init_expression The expression initializing the string (double-quoted string)
- * @return Returns a new command pointer representing the string declaration
+/*
+    Create a string declaration command without size specified (initialized with double-quoted string)
+
+    string_name : The name of the string variable
+    init_expression : The expression initializing the string (double-quoted string)
+    Returns a new command pointer representing the string declaration
  */
 struct cmd * TStringDeclStringEmpty(char * string_name, struct expr * init_expression) {
   struct cmd * res = new_cmd_ptr();
@@ -283,13 +282,13 @@ struct cmd * TStringDeclStringEmpty(char * string_name, struct expr * init_expre
   return res;
 }
 
-/**
- * Create a character array declaration command (initialized with character list)
- * 
- * @param char_array_name The name of the character array
- * @param char_array_size The size of the array
- * @param init_expression The initialization expression list for the character array
- * @return Returns a new command pointer representing the character array declaration
+/*
+    Create a character array declaration command (initialized with character list)
+ 
+    char_array_name : The name of the character array
+    char_array_size : The size of the array
+    init_expression : The initialization expression list for the character array
+    Returns a new command pointer representing the character array declaration
  */
 struct cmd * TStringDeclArray(char * char_array_name, struct expr * char_array_size, struct init_list * init_expression) {
     struct cmd * result = new_cmd_ptr();
@@ -300,12 +299,12 @@ struct cmd * TStringDeclArray(char * char_array_name, struct expr * char_array_s
     return result;
 }
 
-/**
- * Create a character array declaration command without size speicfied (initialized with character list)
- * 
- * @param char_array_name The name of the character array
- * @param init_expression The initialization expression list for the character array
- * @return Returns a new command pointer representing the character array declaration
+/*
+    Create a character array declaration command without size speicfied (initialized with character list)
+
+    char_array_name : The name of the character array
+    init_expression : The initialization expression list for the character array
+    Returns a new command pointer representing the character array declaration
  */
 struct cmd * TStringDeclArrayEmpty(char * char_array_name, struct init_list * init_expression) {
   struct cmd * res = new_cmd_ptr();
@@ -379,13 +378,13 @@ int print_char_list(struct init_list *list, int depth) {
     return size;
 }
 
-/**
- * Create a pointer declaration command.
- * 
- * @param name The name of the pointer variable.
- * @param pointer_level The level of the pointer (single or multi-level).
- * @param size If it is a dynamically allocated pointer, this indicates the size allocated; if static or unallocated, set to NULL.
- * @return Returns a new command pointer representing the pointer declaration.
+/* 
+    Create a pointer declaration command.
+
+    name : The name of the pointer variable.
+    pointer_level : The level of the pointer (single or multi-level).
+    size : If it is a dynamically allocated pointer, this indicates the size allocated; if static or unallocated, set to NULL.
+    Returns a new command pointer representing the pointer declaration.
  */
 struct cmd * TPointerDecl(char * name, int pointer_level, struct expr * size) {
     struct cmd * result = new_cmd_ptr();
@@ -400,11 +399,11 @@ struct cmd * TPointerDecl(char * name, int pointer_level, struct expr * size) {
     return result;
 }
 
-/**
- * Create a single character constant expression.
- * 
- * @param char_const Represents the character constant.
- * @return Returns a new expression pointer representing the character constant.
+/* 
+    Create a single character constant expression.
+
+    char_const : Represents the character constant.
+    Returns a new expression pointer representing the character constant.
  */
 struct expr * TChar(char * char_const) {
     struct expr * result = new_expr_ptr();
@@ -413,11 +412,11 @@ struct expr * TChar(char * char_const) {
     return result;
 }
 
-/**
- * Create a string constant expression.
- * 
- * @param str_const Represents the string constant.
- * @return Returns a new expression pointer representing the string constant.
+/* 
+    Create a string constant expression.
+ 
+    str_const : Represents the string constant.
+    Returns a new expression pointer representing the string constant.
  */
 struct expr * TString(char * str_const) {
     struct expr * result = new_expr_ptr();
@@ -435,11 +434,11 @@ struct cmd * TCharDecl(char * char_name, struct expr * init_expression) {
     return result;
 }
 
-/**
- * Create a single-statement multi-variable declaration command.
- * 
- * @param variable_list Pointer to the variable declaration list, each element in the list is a variable declaration.
- * @return Returns a new command pointer representing the multi-variable declaration.
+/* 
+    Create a single-statement multi-variable declaration command.
+ 
+    variable_list : Pointer to the variable declaration list, each element in the list is a variable declaration.
+    Returns a new command pointer representing the multi-variable declaration.
  */
 struct cmd * TMultiVarDecl(struct multi_var_decl * variable_list) {
     struct cmd * result = new_cmd_ptr();
@@ -448,11 +447,11 @@ struct cmd * TMultiVarDecl(struct multi_var_decl * variable_list) {
     return result;
 }
 
-/**
- * Create a new variable declaration list node.
- * 
- * @param var_decl The variable declaration structure.
- * @return Returns a new variable declaration list node.
+/* 
+    Create a new variable declaration list node.
+ 
+    var_decl The variable declaration structure.
+    Returns a new variable declaration list node.
  */
 struct multi_var_decl * create_multi_var_decl(struct var_decl var_decl) {
     struct multi_var_decl * new_node = malloc(sizeof(struct multi_var_decl));
@@ -465,12 +464,12 @@ struct multi_var_decl * create_multi_var_decl(struct var_decl var_decl) {
     return new_node;
 }
 
-/**
- * Append a new variable declaration to an existing variable declaration list.
- * 
- * @param multi_var_decl_list The existing variable declaration list.
- * @param var_decl The new variable declaration.
- * @return Returns the updated variable declaration list.
+/* 
+    Append a new variable declaration to an existing variable declaration list.
+  
+    multi_var_decl_list : The existing variable declaration list.
+    var_decl : The new variable declaration.
+    Returns the updated variable declaration list.
  */
 struct multi_var_decl * add_multi_var_decl(struct multi_var_decl * multi_var_decl_list, struct var_decl var_decl) {
     if (multi_var_decl_list == NULL) {
@@ -589,7 +588,6 @@ void print_unop(enum UnOpType operation, int depth) {
     }
 }
 
-// Function to print various expression types
 void print_expr(struct expr *e, int depth) {
     print_indent(depth);
 
