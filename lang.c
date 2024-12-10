@@ -41,115 +41,115 @@ struct cmd * new_cmd_ptr() {
 }
 
 struct expr * TConst(unsigned int value) {
-    struct expr * result = new_expr_ptr();
-    result->t = T_CONST;
-    result->d.CONST.value = value;
-    return result;
+  struct expr * res = new_expr_ptr();
+  res -> t = T_CONST;
+  res -> d.CONST.value = value;
+  return res;
 }
 
-struct expr * TVar(char * identifier) {
-    struct expr * result = new_expr_ptr();
-    result->t = T_VAR;
-    result->d.VAR.name = identifier;
-    return result;
+struct expr * TVar(char * name) {
+  struct expr * res = new_expr_ptr();
+  res -> t = T_VAR;
+  res -> d.VAR.name = name;
+  return res;
 }
 
-struct expr * TBinOp(enum BinOpType operation, struct expr * left_expr, struct expr * right_expr) {
-    struct expr * result = new_expr_ptr();
-    result->t = T_BINOP;
-    result->d.BINOP.op = operation;
-    result->d.BINOP.left = left_expr;
-    result->d.BINOP.right = right_expr;
-    return result;
+struct expr * TBinOp(enum BinOpType op, struct expr * left, struct expr * right) {
+  struct expr * res = new_expr_ptr();
+  res -> t = T_BINOP;
+  res -> d.BINOP.op = op;
+  res -> d.BINOP.left = left;
+  res -> d.BINOP.right = right;
+  return res;
 }
 
-struct expr * TUnOp(enum UnOpType operation, struct expr * argument) {
-    struct expr * result = new_expr_ptr();
-    result->t = T_UNOP;
-    result->d.UNOP.op = operation;
-    result->d.UNOP.arg = argument;
-    return result;
+struct expr * TUnOp(enum UnOpType op, struct expr * arg) {
+  struct expr * res = new_expr_ptr();
+  res -> t = T_UNOP;
+  res -> d.UNOP.op = op;
+  res -> d.UNOP.arg = arg;
+  return res;
 }
 
-struct expr * TDeref(struct expr * argument) {
-    struct expr * result = new_expr_ptr();
-    result->t = T_DEREF;
-    result->d.DEREF.arg = argument;
-    return result;
+struct expr * TDeref(struct expr * arg) {
+  struct expr * res = new_expr_ptr();
+  res -> t = T_DEREF;
+  res -> d.DEREF.arg = arg;
+  return res;
 }
 
-struct expr * TMalloc(struct expr * argument) {
-    struct expr * result = new_expr_ptr();
-    result->t = T_MALLOC;
-    result->d.MALLOC.arg = argument;
-    return result;
+struct expr * TMalloc(struct expr * arg) {
+  struct expr * res = new_expr_ptr();
+  res -> t = T_MALLOC;
+  res -> d.MALLOC.arg = arg;
+  return res;
 }
 
 struct expr * TReadInt() {
-    struct expr * result = new_expr_ptr();
-    result->t = T_RI;
-    return result;
+  struct expr * res = new_expr_ptr();
+  res -> t = T_RI;
+  return res;
 }
 
 struct expr * TReadChar() {
-    struct expr * result = new_expr_ptr();
-    result->t = T_RC;
-    return result;
+  struct expr * res = new_expr_ptr();
+  res -> t = T_RC;
+  return res;
 }
 
 struct cmd * TDecl(char * name, struct expr * init_expr) {
-    struct cmd * result = new_cmd_ptr();
-    result->t = T_DECL;
-    result->d.DECL.name = name;
-    result->d.DECL.init_expr = init_expr;
-    return result;
+  struct cmd * res = new_cmd_ptr();
+  res -> t = T_DECL;
+  res -> d.DECL.name = name;
+  res -> d.DECL.init_expr = init_expr;
+  return res;
 }
 
-struct cmd * TAsgn(struct expr * left_expr, struct expr * right_expr) {
-    struct cmd * result = new_cmd_ptr();
-    result->t = T_ASGN;
-    result->d.ASGN.left = left_expr;
-    result->d.ASGN.right = right_expr;
-    return result;
+struct cmd * TAsgn(struct expr * left, struct expr * right) {
+  struct cmd * res = new_cmd_ptr();
+  res -> t = T_ASGN;
+  res -> d.ASGN.left = left;
+  res -> d.ASGN.right = right;
+  return res;
 }
 
-struct cmd * TSeq(struct cmd * first_cmd, struct cmd * second_cmd) {
-    struct cmd * result = new_cmd_ptr();
-    result->t = T_SEQ;
-    result->d.SEQ.left = first_cmd;
-    result->d.SEQ.right = second_cmd;
-    return result;
+struct cmd * TSeq(struct cmd * left, struct cmd * right) {
+  struct cmd * res = new_cmd_ptr();
+  res -> t = T_SEQ;
+  res -> d.SEQ.left = left;
+  res -> d.SEQ.right = right;
+  return res;
 }
 
-struct cmd * TIf(struct expr * condition, struct cmd * then_cmd, struct cmd * else_cmd) {
-    struct cmd * result = new_cmd_ptr();
-    result->t = T_IF;
-    result->d.IF.cond = condition;
-    result->d.IF.left = then_cmd;
-    result->d.IF.right = else_cmd;
-    return result;
+struct cmd * TIf(struct expr * cond, struct cmd * left, struct cmd * right) {
+  struct cmd * res = new_cmd_ptr();
+  res -> t = T_IF;
+  res -> d.IF.cond = cond;
+  res -> d.IF.left = left;
+  res -> d.IF.right = right;
+  return res;
 }
 
-struct cmd * TWhile(struct expr * condition, struct cmd * body_cmd) {
-    struct cmd * result = new_cmd_ptr();
-    result->t = T_WHILE;
-    result->d.WHILE.cond = condition;
-    result->d.WHILE.body = body_cmd;
-    return result;
+struct cmd * TWhile(struct expr * cond, struct cmd * body) {
+  struct cmd * res = new_cmd_ptr();
+  res -> t = T_WHILE;
+  res -> d.WHILE.cond = cond;
+  res -> d.WHILE.body = body;
+  return res;
 }
 
-struct cmd * TWriteInt(struct expr * argument) {
-    struct cmd * result = new_cmd_ptr();
-    result->t = T_WI;
-    result->d.WI.arg = argument;
-    return result;
+struct cmd * TWriteInt(struct expr * arg) {
+  struct cmd * res = new_cmd_ptr();
+  res -> t = T_WI;
+  res -> d.WI.arg = arg;
+  return res;
 }
 
-struct cmd * TWriteChar(struct expr * argument) {
-    struct cmd * result = new_cmd_ptr();
-    result->t = T_WC;
-    result->d.WC.arg = argument;
-    return result;
+struct cmd * TWriteChar(struct expr * arg) {
+  struct cmd * res = new_cmd_ptr();
+  res -> t = T_WC;
+  res -> d.WC.arg = arg;
+  return res;
 }
 
 /*
