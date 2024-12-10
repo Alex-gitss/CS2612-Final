@@ -16,6 +16,10 @@
     return TM_VAR;
 }
 
+"char" {
+    return TM_CHAR;
+}
+
 "if" {
     return TM_IF;
 }

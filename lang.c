@@ -268,6 +268,22 @@ struct cmd * TStringDeclString(char * string_name, struct expr * string_size, st
 }
 
 /**
+ * Create a string declaration command without size specified (initialized with double-quoted string)
+ * 
+ * @param string_name The name of the string variable
+ * @param init_expression The expression initializing the string (double-quoted string)
+ * @return Returns a new command pointer representing the string declaration
+ */
+struct cmd * TStringDeclStringEmpty(char * string_name, struct expr * init_expression) {
+  struct cmd * res = new_cmd_ptr();
+  res->t = T_STRING_DECL_WITH_STRING;
+  res->d.STRING_DECL_WITH_STRING.name = string_name;
+  res->d.STRING_DECL_WITH_STRING.size = -1;
+  res->d.STRING_DECL_WITH_STRING.init_expr = init_expression;
+  return res;
+}
+
+/**
  * Create a character array declaration command (initialized with character list)
  * 
  * @param char_array_name The name of the character array
@@ -284,11 +300,26 @@ struct cmd * TStringDeclArray(char * char_array_name, struct expr * char_array_s
     return result;
 }
 
+/**
+ * Create a character array declaration command without size speicfied (initialized with character list)
+ * 
+ * @param char_array_name The name of the character array
+ * @param init_expression The initialization expression list for the character array
+ * @return Returns a new command pointer representing the character array declaration
+ */
+struct cmd * TStringDeclArrayEmpty(char * char_array_name, struct init_list * init_expression) {
+  struct cmd * res = new_cmd_ptr();
+  res->t = T_STRING_DECL_WITH_ARRAY;
+  res->d.STRING_DECL_WITH_ARRAY.name = char_array_name;
+  res->d.STRING_DECL_WITH_ARRAY.size = -1;
+  res->d.STRING_DECL_WITH_ARRAY.init_expr = init_expression;
+  return res;
+}
 
 // Function to print information about expression lists
 void print_expr_list(struct expr_list *list, int depth) {
     print_indent(depth);
-    printf("EXPR_LIST\n");
+    printf(BLUE "EXPR_LIST\n" RESET);
 
     struct expr_list * current = list;
     while (current != NULL) {
@@ -298,9 +329,6 @@ void print_expr_list(struct expr_list *list, int depth) {
         }
         current = current->next;
     }
-
-    print_indent(depth);
-    printf("\n");
 }
 
 // A helper function to handle new initialization lists
@@ -326,16 +354,13 @@ void print_init_list(struct init_list *list, int depth) {
         print_expr(current->expr, depth);
         current = current->next;
     }
-
-    print_indent(depth);
-    printf("\n");
 }
 
 // Function to print information about character lists
 int print_char_list(struct init_list *list, int depth) {
     int size = 0;
     print_indent(depth);
-    printf("CHAR_LIST\n");
+    printf(BLUE "CHAR_LIST\n" RESET);
 
     if (list == NULL) {
         print_indent(depth + 1);
@@ -346,13 +371,11 @@ int print_char_list(struct init_list *list, int depth) {
     struct expr_list * current = list->exprs;
     while (current != NULL) {
         print_indent(depth + 1);
-        printf("CHAR('%c')\n", current->expr->d.CHAR.c[1]);
+        printf(BLUE "CHAR('%c')\n" RESET, current->expr->d.CHAR.c[1]);
         current = current->next;
         size += 1;
     }
 
-    print_indent(depth);
-    printf("\n");
     return size;
 }
 
@@ -461,61 +484,107 @@ struct multi_var_decl * add_multi_var_decl(struct multi_var_decl * multi_var_dec
     return multi_var_decl_list;
 }
 
-void print_binop(enum BinOpType operation, int depth) {
-    print_indent(depth);
+void print_binop(enum BinOpType op, int depth) {
+    // print_indent(depth);
 
-    switch (operation) {
+    switch (op) {
     case T_PLUS:
-        printf("PLUS\n");
+        printf(BLUE "PLUS\n" RESET);
         break;
     case T_MINUS:
-        printf("MINUS\n");
+        printf(BLUE "MINUS\n" RESET);
         break;
     case T_MUL:
-        printf("MUL\n");
+        printf(BLUE "MUL\n" RESET);
         break;
     case T_DIV:
-        printf("DIV\n");
+        printf(BLUE "DIV\n" RESET);
         break;
     case T_MOD:
-        printf("MOD\n");
+        printf(BLUE "MOD\n" RESET);
         break;
     case T_LT:
-        printf("LT\n");
+        printf(BLUE "LT\n" RESET);
         break;
     case T_GT:
-        printf("GT\n");
+        printf(BLUE "GT\n" RESET);
         break;
     case T_LE:
-        printf("LE\n");
+        printf(BLUE "LE\n" RESET);
         break;
     case T_GE:
-        printf("GE\n");
+        printf(BLUE "GE\n" RESET);
         break;
     case T_EQ:
-        printf("EQ\n");
+        printf(BLUE "EQ\n" RESET);
         break;
     case T_NE:
-        printf("NE\n");
+        printf(BLUE "NE\n" RESET);
         break;
     case T_AND:
-        printf("AND\n");
+        printf(BLUE "AND\n" RESET);
         break;
     case T_OR:
-        printf("OR\n");
+        printf(BLUE "OR\n" RESET);
         break;
     }
 }
+
+// void print_binop(enum BinOpType operation, int depth) {
+//     print_indent(depth);
+
+//     switch (operation) {
+//     case T_PLUS:
+//         printf("PLUS\n");
+//         break;
+//     case T_MINUS:
+//         printf("MINUS\n");
+//         break;
+//     case T_MUL:
+//         printf("MUL\n");
+//         break;
+//     case T_DIV:
+//         printf("DIV\n");
+//         break;
+//     case T_MOD:
+//         printf("MOD\n");
+//         break;
+//     case T_LT:
+//         printf("LT\n");
+//         break;
+//     case T_GT:
+//         printf("GT\n");
+//         break;
+//     case T_LE:
+//         printf("LE\n");
+//         break;
+//     case T_GE:
+//         printf("GE\n");
+//         break;
+//     case T_EQ:
+//         printf("EQ\n");
+//         break;
+//     case T_NE:
+//         printf("NE\n");
+//         break;
+//     case T_AND:
+//         printf("AND\n");
+//         break;
+//     case T_OR:
+//         printf("OR\n");
+//         break;
+//     }
+// }
 
 void print_unop(enum UnOpType operation, int depth) {
     print_indent(depth);
 
     switch (operation) {
     case T_UMINUS:
-        printf("UMINUS\n");
+        printf(BLUE "UMINUS\n" RESET);
         break;
     case T_NOT:
-        printf("NOT\n");
+        printf(BLUE "NOT\n" RESET);
         break;
     }
 }
@@ -526,88 +595,141 @@ void print_expr(struct expr *e, int depth) {
 
     switch (e->t) {
     case T_CONST:
-        printf("CONST(%d)\n", e->d.CONST.value);
+        printf(BLUE "CONST(%d)\n" RESET, e->d.CONST.value);
         break;
     case T_VAR:
-        printf("VAR(%s)\n", e->d.VAR.name);
+        printf(BLUE "VAR(%s)\n" RESET, e->d.VAR.name);
         break;
-    // For binary operations, print the two operands
     case T_BINOP:
-        print_binop(e->d.BINOP.op, 0); 
+        print_binop(e->d.BINOP.op, depth);
         print_indent(depth + 1);
-        printf("Left:\n");
+        printf(BLUE "Left:\n" RESET);
         print_expr(e->d.BINOP.left, depth + 2);
         print_indent(depth + 1);
-        printf("Right:\n");
+        printf(BLUE "Right:\n" RESET);
         print_expr(e->d.BINOP.right, depth + 2);
-        print_indent(depth);
-        printf("\n");
         break;
-    // For unary operations, print only one operand
     case T_UNOP:
-        printf("UNOP");
-        print_unop(e->d.UNOP.op, depth + 1); 
-        printf("\n");
+        print_unop(e->d.UNOP.op, depth);
         print_indent(depth + 1);
-        printf("Arg:\n");
+        printf(BLUE "Arg:\n" RESET);
         print_expr(e->d.UNOP.arg, depth + 2);
-        print_indent(depth);
-        printf("\n");
         break;
     case T_DEREF:
-        printf("DEREF\n");
+        printf(BLUE "DEREF\n" RESET);
         print_expr(e->d.DEREF.arg, depth + 1);
-        print_indent(depth);
-        printf("\n");
         break;
     case T_MALLOC:
-        printf("MALLOC\n");
+        printf(BLUE "MALLOC\n" RESET);
         print_expr(e->d.MALLOC.arg, depth + 1);
-        print_indent(depth);
-        printf("\n");
         break;
     case T_RI:
-        printf("READ_INT()\n");
+        printf(BLUE "READ_INT()\n" RESET);
         break;
     case T_RC:
-        printf("READ_CHAR()\n");
+        printf(BLUE "READ_CHAR()\n" RESET);
         break;
-    // Print array name and index
     case T_ARRAY:
-        printf("ARRAY%s,\n", e->d.ARRAY.array);
+        printf(BLUE "ARRAY(%s)\n" RESET, e->d.ARRAY.array);
         print_indent(depth + 1);
-        printf("Index:\n");
+        printf(BLUE "Index:\n" RESET);
         print_expr(e->d.ARRAY.index, depth + 2);
-        print_indent(depth);
-        printf("\n");
         break;
-    // Print multi-dimensional array name and indices
     case T_MD_ARRAY:
-        printf("ARRAY\n");
+        printf(BLUE "ARRAY\n" RESET);
         print_indent(depth + 1);
-        printf("Object:\n");
+        printf(BLUE "Object:\n" RESET);
         print_expr(e->d.MD_ARRAY.array, depth + 2);
         print_indent(depth + 1);
-        printf("Index:\n");
+        printf(BLUE "Index:\n" RESET);
         print_expr(e->d.MD_ARRAY.index, depth + 2);
-        print_indent(depth);
-        printf("\n");
         break;
-    // Print string
     case T_STRING:
-        printf("STRING(%s)\n", e->d.STRING.str);
+        printf(BLUE "STRING(%s)\n" RESET, e->d.STRING.str);
         break;
-    // Print single character
     case T_CHAR:
-        printf("CHAR('%c')\n", e->d.CHAR.c[1]);
+        printf(BLUE "CHAR('%c')\n" RESET, e->d.CHAR.c[1]);
         break;
-    // Print initialization list
     case T_INIT_LIST:
-        printf("INIT_LIST\n");
-        print_init_list(e->d.init_list, depth + 1); 
+        printf(BLUE "INIT_LIST\n" RESET);
+        print_init_list(e->d.init_list, depth + 1);
         break;
     }
 }
+// void print_expr(struct expr *e, int depth) {
+//     print_indent(depth);
+
+//     switch (e->t) {
+//     case T_CONST:
+//         printf("CONST(%d)\n", e->d.CONST.value);
+//         break;
+//     case T_VAR:
+//         printf("VAR(%s)\n", e->d.VAR.name);
+//         break;
+//     // For binary operations, print the two operands
+//     case T_BINOP:
+//         print_binop(e->d.BINOP.op, 0); 
+//         print_indent(depth + 1);
+//         printf("Left:\n");
+//         print_expr(e->d.BINOP.left, depth + 2);
+//         print_indent(depth + 1);
+//         printf("Right:\n");
+//         print_expr(e->d.BINOP.right, depth + 2);
+//         break;
+//     // For unary operations, print only one operand
+//     case T_UNOP:
+//         print_unop(e->d.UNOP.op, depth + 1); 
+//         printf("\n");
+//         print_indent(depth + 1);
+//         printf("Arg:\n");
+//         print_expr(e->d.UNOP.arg, depth + 2);
+//         break;
+//     case T_DEREF:
+//         printf("DEREF\n");
+//         print_expr(e->d.DEREF.arg, depth + 1);
+//         break;
+//     case T_MALLOC:
+//         printf("MALLOC\n");
+//         print_expr(e->d.MALLOC.arg, depth + 1);
+//         break;
+//     case T_RI:
+//         printf("READ_INT()\n");
+//         break;
+//     case T_RC:
+//         printf("READ_CHAR()\n");
+//         break;
+//     // Print array name and index
+//     case T_ARRAY:
+//         printf("ARRAY%s,\n", e->d.ARRAY.array);
+//         print_indent(depth + 1);
+//         printf("Index:\n");
+//         print_expr(e->d.ARRAY.index, depth + 2);
+//         break;
+//     // Print multi-dimensional array name and indices
+//     case T_MD_ARRAY:
+//         printf("ARRAY\n");
+//         print_indent(depth + 1);
+//         printf("Object:\n");
+//         print_expr(e->d.MD_ARRAY.array, depth + 2);
+//         print_indent(depth + 1);
+//         printf("Index:\n");
+//         print_expr(e->d.MD_ARRAY.index, depth + 2);
+//         break;
+//     // Print string
+//     case T_STRING:
+//         printf("STRING(%s)\n", e->d.STRING.str);
+//         break;
+//     // Print single character
+//     case T_CHAR:
+//         printf("CHAR('%c')\n", e->d.CHAR.c[1]);
+//         break;
+//     // Print initialization list
+//     case T_INIT_LIST:
+//         printf("INIT_LIST\n");
+//         print_init_list(e->d.init_list, depth + 1); 
+//         break;
+//     }
+// }
 
 // Function to print information related to variable declarations
 void print_var_decl(struct var_decl *var, int depth) {
@@ -616,11 +738,11 @@ void print_var_decl(struct var_decl *var, int depth) {
     switch (var->type) {
     // For simple variables, print the variable name and initial value
     case VAR_SIMPLE:
-        printf("Object:\n");
+        printf(BLUE "Object:\n" RESET);
         print_indent(depth + 1);
-        printf("VAR(%s)\n", var->name);
+        printf(BLUE "VAR(%s)\n" RESET, var->name);
         print_indent(depth);
-        printf("Init Expr:\n");
+        printf(BLUE "Init Expr:\n" RESET);
         if (var->init_expr != NULL) {
             print_expr(var->init_expr, depth + 1);
         } else {
@@ -630,23 +752,23 @@ void print_var_decl(struct var_decl *var, int depth) {
         break;
     // For array variables, print the array name, index, and initialization list
     case VAR_ARRAY:
-        printf("Object:\n");
+        printf(BLUE "Object:\n" RESET);
         print_indent(depth + 1);
-        printf("ARRAY(%s", var->name);
+        printf(BLUE "ARRAY(%s" RESET, var->name);
         struct expr_list *dimension = var->sizes;
         while (dimension != NULL) {
             if (dimension->expr) {
-                printf("[");
-                printf("CONST(%d)", dimension->expr->d.CONST.value);
-                printf("]");
+                printf(BLUE "[" RESET);
+                printf(BLUE "CONST(%d)" RESET, dimension->expr->d.CONST.value);
+                printf(BLUE "]" RESET);
             } else {
                 printf("[]");
             }
             dimension = dimension->next;
         }
-        printf(")\n");
+        printf(BLUE ")\n" RESET);
         print_indent(depth);
-        printf("Init List:\n");
+        printf(BLUE "Init List:\n" RESET);
         if (var->init_expr_list != NULL) {
             print_init_list(var->init_expr_list, depth + 1);
         } else {
@@ -656,11 +778,11 @@ void print_var_decl(struct var_decl *var, int depth) {
         break;
     // For pointer variables, print the pointer name, level, and initialization value
     case VAR_POINTER:
-        printf("Object:\n");
+        printf(BLUE "Object:\n" RESET);
         print_indent(depth + 1);
-        printf("PTR(%s, level: %d)\n", var->name, var->pointer_level);
+        printf(BLUE "PTR(%s, level: %d)\n" RESET, var->name, var->pointer_level);
         print_indent(depth);
-        printf("Init Expr:\n");
+        printf(BLUE "Init Expr:\n" RESET);
         if (var->init_expr != NULL) {
             print_expr(var->init_expr, depth + 1);
         } else {
@@ -776,7 +898,14 @@ void print_cmd(struct cmd *c, int depth) {
     case T_STRING_DECL_WITH_STRING:
         printf(RED "STRING_DECL(%s)\n" RESET, c->d.STRING_DECL_WITH_STRING.name);
         if (c->d.STRING_DECL_WITH_STRING.init_expr != NULL) {
-            unsigned int malloc_size = c->d.STRING_DECL_WITH_STRING.size->d.CONST.value;
+            unsigned int malloc_size;
+            if (c->d.STRING_DECL_WITH_STRING.size != -1){
+                malloc_size = c->d.STRING_DECL_WITH_STRING.size->d.CONST.value;
+            }
+            else{
+                malloc_size = strlen(c->d.STRING_DECL_WITH_STRING.init_expr->d.STRING.str) - 2;
+            }
+            // unsigned int malloc_size = c->d.STRING_DECL_WITH_STRING.size->d.CONST.value;
             unsigned int init_size = strlen(c->d.STRING_DECL_WITH_STRING.init_expr->d.STRING.str) - 2;
             print_indent(depth + 1);
             printf(BLUE "Malloc Size:\n" RESET);
@@ -795,7 +924,22 @@ void print_cmd(struct cmd *c, int depth) {
     case T_STRING_DECL_WITH_ARRAY:
         printf(RED "STRING_DECL(%s)\n" RESET, c->d.STRING_DECL_WITH_ARRAY.name);
         if (c->d.STRING_DECL_WITH_ARRAY.init_expr != NULL) {
-            int malloc_size = c->d.STRING_DECL_WITH_ARRAY.size->d.CONST.value;
+            int malloc_size;
+            if (c->d.STRING_DECL_WITH_ARRAY.size != -1){
+                malloc_size = c->d.STRING_DECL_WITH_ARRAY.size->d.CONST.value;
+            }
+            else{
+                struct expr_list *current = c->d.STRING_DECL_WITH_ARRAY.init_expr->exprs;
+                int count = 0;
+                while (current){
+                    // printf("%s\n", current->expr->d.CHAR.c);
+                    count++;
+                    current = current->next;
+                }
+                
+                malloc_size = count;
+            }
+            // int malloc_size = c->d.STRING_DECL_WITH_ARRAY.size->d.CONST.value;
             print_indent(depth + 1);
             printf(BLUE "Malloc Size:\n" RESET);
             print_indent(depth + 2);

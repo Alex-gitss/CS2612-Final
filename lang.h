@@ -179,11 +179,14 @@ struct cmd * TWriteChar(struct expr * arg);
 struct cmd * TArrayDecl(char * name, struct expr * size, struct init_list * init_expr);
 // declaration of char type
 struct cmd * TCharDecl(char * name, struct expr * init_expr);
-// declaration of string type using string
+// declaration of string type using string with size specified
 struct cmd * TStringDeclString(char * name, struct expr * size, struct expr * init_expr);
-// declaration of string type using char array
+// declaration of string type using char array with size specified
 struct cmd * TStringDeclArray(char * name, struct expr * size, struct init_list * init_expr);
-
+// declaration of string type using string without size specified
+struct cmd * TStringDeclStringEmpty(char * name, struct expr * init_expr);
+// declaration of string type using char array without size specified
+struct cmd * TStringDeclArrayEmpty(char * name, struct init_list * init_expr);
 
 // declaration of pointer type
 struct cmd * TPointerDecl(char * name, int pointer_level, struct expr * size);

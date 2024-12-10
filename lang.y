@@ -55,16 +55,16 @@ struct multi_var_decl * multi_var_decl;
 // expression list type
 %type <expr_list> NT_EXPR_LIST
 
-// 初始化字符列表
+// Initialize character list
 %type <init_list> NT_INIT_CHAR_LIST
-// 字符列表
+// character lisst
 %type <expr_list> NT_CHAR_LIST
 
 // declaration one of variable
 %type <var_decl> NT_VAR_DECL
 // declaration of multi variables
 %type <multi_var_decl> NT_VAR_LIST
-// 多维数组索引
+// Multidimensional array index
 %type <sizes> NT_MD_ARRAY_SIZES
 
 // Priority
@@ -239,36 +239,46 @@ NT_CMD:
   {
     $$ = (TWriteChar($3));
   }
-// 解析动态数组初始化, malloc
+// Parsing dynamic array initialization, malloc
 | TM_VAR NT_POINTER_LEVEL TM_IDENT TM_ASGNOP TM_MALLOC TM_LEFT_PAREN NT_EXPR TM_RIGHT_PAREN
   {
-    // $2 是指针级别
+    // $2 is the pointer level
     $$ = TPointerDecl($3, $2, $7); 
   } 
 | TM_CHAR TM_IDENT 
   {
-    $$ = TCharDecl($2, NULL); // 创建一个不带初始化的字符变量声明
+    $$ = TCharDecl($2, NULL); // Create a character variable declaration without initialization
   }
   | TM_CHAR TM_IDENT TM_ASGNOP TM_SINGLE_CHAR 
   {
-    $$ = TCharDecl($2, TChar($4)); // 创建一个带有初始化的字符变量声明
+    $$ = TCharDecl($2, TChar($4)); // Create a character variable declaration with initialization
   }
-// 解析字符串类型, 规定了大小
+// Parsing string type with specified size
 | TM_CHAR TM_IDENT TM_LEFT_BRACKET NT_EXPR TM_RIGHT_BRACKET 
   {
       $$ = TStringDeclString($2, $4, NULL); 
   }
-// 解析字符串类型, 规定了大小, 并以双引号包围字符串初始化
+// Parsing string type with specified size and initialized with a string enclosed in double quotes
 | TM_CHAR TM_IDENT TM_LEFT_BRACKET NT_EXPR TM_RIGHT_BRACKET TM_ASGNOP TM_STRING
   {
       $$ = TStringDeclString($2, $4, TString($7)); 
   }
-// 解析字符串类型, 规定了大小, 并以字符列表初始化
+// Parsing string type without specified size and initialized with a string enclosed in double quotes
+| TM_CHAR TM_IDENT TM_LEFT_BRACKET TM_RIGHT_BRACKET TM_ASGNOP TM_STRING
+  {
+      $$ = TStringDeclStringEmpty($2, TString($6)); 
+  }
+// Parsing string type with specified size and initialized with a character list
 | TM_CHAR TM_IDENT TM_LEFT_BRACKET NT_EXPR TM_RIGHT_BRACKET TM_ASGNOP NT_INIT_CHAR_LIST
   {
       $$ = TStringDeclArray($2, $4, $7); 
   }
-// 变量的声明, 单/多变量, 进一步在NT_VAR_LIST中解析
+// Parsing string type without specified size and initialized with a character list
+| TM_CHAR TM_IDENT TM_LEFT_BRACKET TM_RIGHT_BRACKET TM_ASGNOP NT_INIT_CHAR_LIST
+  {
+      $$ = TStringDeclArrayEmpty($2, $6); 
+  }
+// Variable declaration, single/multiple variables, further parsed in NT_VAR_LIST
 | TM_VAR NT_VAR_LIST
   {
     $$ = TMultiVarDecl($2);
@@ -323,10 +333,10 @@ NT_EXPR_2:
   {
     $$ = (TDeref($2));
   }
-// 多维数组情形
+// Multidimensional array case
 | NT_EXPR_2 TM_LEFT_BRACKET NT_EXPR TM_RIGHT_BRACKET
   {
-    $$ = (TMDArray($1, $3)); // 多维数组访问
+    $$ = (TMDArray($1, $3)); // Multidimensional array visit
   }
 ;
 
