@@ -736,7 +736,7 @@ void print_var_decl(struct var_decl *var, int depth) {
     switch (var->type) {
     // For simple variables, print the variable name and initial value
     case VAR_SIMPLE:
-        printf(BLUE "Object:\n" RESET);
+        printf("Object:\n");
         print_indent(depth + 1);
         printf(BLUE "VAR(%s)\n" RESET, var->name);
         print_indent(depth);
@@ -750,7 +750,7 @@ void print_var_decl(struct var_decl *var, int depth) {
         break;
     // For array variables, print the array name, index, and initialization list
     case VAR_ARRAY:
-        printf(BLUE "Object:\n" RESET);
+        printf("Object:\n");
         print_indent(depth + 1);
         printf(BLUE "ARRAY(%s" RESET, var->name);
         struct expr_list *dimension = var->sizes;
@@ -776,7 +776,7 @@ void print_var_decl(struct var_decl *var, int depth) {
         break;
     // For pointer variables, print the pointer name, level, and initialization value
     case VAR_POINTER:
-        printf(BLUE "Object:\n" RESET);
+        printf("Object:\n");
         print_indent(depth + 1);
         printf(BLUE "PTR(%s, level: %d)\n" RESET, var->name, var->pointer_level);
         print_indent(depth);
@@ -787,6 +787,15 @@ void print_var_decl(struct var_decl *var, int depth) {
             print_indent(depth + 1);
             printf("None\n");
         }
+        break;
+
+    case VAR_POINTER_MALLOC:
+        printf("Object:\n");
+        print_indent(depth + 1);
+        printf(BLUE "PTR(%s, level: %d)\n" RESET, var->name, var->pointer_level);
+        print_indent(depth+2);
+        printf(BLUE "Size Expr:\n" RESET);
+        print_expr(var->init_expr, depth + 3);
         break;
     }
 }

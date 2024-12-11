@@ -171,34 +171,6 @@ NT_MD_ARRAY_SIZES:
   }
 ;
 
-// declaration of variables
-NT_VAR_DECL:
-  // declaration of single variable
-  TM_IDENT
-  {
-    $$ = (struct var_decl){ .name = $1, .type = VAR_SIMPLE, .sizes = NULL, .pointer_level = 0 };
-  }
-  // declaration and initialization of single variable
-| TM_IDENT TM_ASGNOP NT_EXPR
-  {
-    $$ = (struct var_decl){ .name = $1, .type = VAR_SIMPLE, .init_expr = $3 };
-  }
-  // declaration of array
-| TM_IDENT NT_MD_ARRAY_SIZES
-  {
-    $$ = (struct var_decl){ .name = $1, .type = VAR_ARRAY, .sizes = $2, .pointer_level = 0 };
-  }
-  // declaration and initialization of array
-| TM_IDENT NT_MD_ARRAY_SIZES TM_ASGNOP NT_INIT_LIST
-  {
-    $$ = (struct var_decl){ .name = $1, .type = VAR_ARRAY, .sizes = $2, .pointer_level = 0, .init_expr_list = $4 };
-  }
-  // declaration of pointer 
-| NT_POINTER_LEVEL TM_IDENT
-  {
-    $$ = (struct var_decl){ .name = $2, .type = VAR_POINTER, .sizes = NULL, .pointer_level = $1 };
-  }
-;
 
 // list of multi variables
 NT_VAR_LIST:
@@ -397,6 +369,40 @@ NT_EXPR:
   {
     $$ = (TBinOp(T_OR,$1,$3));
   }
+;
+
+// declaration of variables
+NT_VAR_DECL:
+  // declaration of single variable
+  TM_IDENT
+  {
+    $$ = (struct var_decl){ .name = $1, .type = VAR_SIMPLE, .sizes = NULL, .pointer_level = 0 };
+  }
+  // declaration and initialization of single variable
+| TM_IDENT TM_ASGNOP NT_EXPR
+  {
+    $$ = (struct var_decl){ .name = $1, .type = VAR_SIMPLE, .init_expr = $3 };
+  }
+  // declaration of array
+| TM_IDENT NT_MD_ARRAY_SIZES
+  {
+    $$ = (struct var_decl){ .name = $1, .type = VAR_ARRAY, .sizes = $2, .pointer_level = 0 };
+  }
+  // declaration and initialization of array
+| TM_IDENT NT_MD_ARRAY_SIZES TM_ASGNOP NT_INIT_LIST
+  {
+    $$ = (struct var_decl){ .name = $1, .type = VAR_ARRAY, .sizes = $2, .pointer_level = 0, .init_expr_list = $4 };
+  }
+  // declaration of pointer 
+| NT_POINTER_LEVEL TM_IDENT
+  {
+    $$ = (struct var_decl){ .name = $2, .type = VAR_POINTER, .sizes = NULL, .pointer_level = $1 };
+  }
+| NT_POINTER_LEVEL TM_IDENT TM_ASGNOP TM_MALLOC TM_LEFT_PAREN NT_EXPR TM_RIGHT_PAREN
+  {
+    // $2 is the pointer level
+    $$ = (struct var_decl){ .name = $2, .type = VAR_POINTER_MALLOC, .sizes = NULL, .pointer_level = $1, .init_expr = $6 };
+  } 
 ;
 
 

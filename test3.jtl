@@ -10,4 +10,5 @@ char a[3] = "abc";
 char a[5] = "abc";
 var a,b,c;
 var a , b[1] , *c , **d;
-var a = 1 , b[1] = {2} , *c = malloc(n);
+var *c = malloc(n);
+var a = 1 , b[1] = {2} , *c = malloc(n), s=5

@@ -101,7 +101,7 @@ struct init_list {
 
 struct var_decl {
     char * name;
-    enum { VAR_SIMPLE, VAR_ARRAY, VAR_POINTER } type;
+    enum { VAR_SIMPLE, VAR_ARRAY, VAR_POINTER, VAR_POINTER_MALLOC} type;
     // size of the array
     struct expr_list * sizes; 
     // levels of pointer
