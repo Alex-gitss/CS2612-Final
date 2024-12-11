@@ -1,0 +1,13 @@
+char test3[] = "This_test_set_is_used_to_test_the_statement_of_the_character_and_the_string_list_as_well_as_the_common_initialization_of_the_initialization_and_the_multiple_variables";
+char a;
+char a = 'b';
+char a[123];
+a = 'b';
+a[1] = 'b';
+char a[2] = {'a' , 'b'};
+char a[1] = "abc";
+char a[3] = "abc";
+char a[5] = "abc";
+var a,b,c;
+var a , b[1] , *c , **d;
+var a = 1 , b[1] = {2} , *c = malloc(n);

@@ -1,0 +1,13 @@
+char test1[]  = "This_test_set_is_used_to_test_one_dimensional_and_multi_dimensional_arrays_pointers_and_multi_level_dereferences";
+var a[123];
+var a[1][2];
+var a[1][2][3];
+a[1] = a[2] + a[3];
+a[1][1] = a[2][2] + a[3][3];
+a[1] = a[2] * a[3];
+var *a;
+var *a = malloc(n);
+var ***a;
+*a  = *b + *c;
+*a = *(a + 16) + *(a + 32);
+*a = *(a + 16) * ***(a + 32);

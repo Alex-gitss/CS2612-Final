@@ -1,0 +1,12 @@
+char test2[] = "This_test_set_is_used_to_test_variable_declarations_under_basic_operations";
+var a = 1;
+var b = a;
+var c = 1 + 2;
+var d = 1 + a;
+var e = a * b;
+var f = a[123];
+var g = a[1][2][3];
+var h = *(a + 16);
+var i[2] = {1 , a};
+var j[2][2] = {{1 , 2},{3 , b}};
+var *k = malloc(123)
