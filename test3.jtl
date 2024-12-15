@@ -1,4 +1,4 @@
-char test3[] = "This_test_set_is_used_to_test_the_statement_of_the_char_and_the _string_as_well_as_the_common_initialization_of_the_multiple_variables";
+char test3[] = "This_test_set_is_used_to_test_the_statement_of_the_char_and_the_string_as_well_as_the_common_initialization_of_the_multiple_variables";
 char a;
 char a = 'b';
 char a[123];
